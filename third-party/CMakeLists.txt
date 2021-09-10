@@ -12,6 +12,8 @@ target_include_directories(cmsis INTERFACE cmsis/core)
 
 add_library(gecko-sdk OBJECT)
 
+target_compile_options(gecko-sdk PRIVATE "-w")
+
 target_compile_definitions(gecko-sdk 
     PUBLIC 
     EFR32BG22C224F512IM40 

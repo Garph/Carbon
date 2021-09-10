@@ -18,6 +18,13 @@ project(Carbon LANGUAGES C CXX ASM)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 include(AddEmbeddedExecutable)
+include(CompilerWarnings)
+
+add_library(project-options INTERFACE)
+target_compile_features(project-options INTERFACE c_std_17 cxx_std_20)
+
+add_library(compiler-warnings INTERFACE)
+set_project_warnings(compiler-warnings)
 
 # Export a compilation database
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)

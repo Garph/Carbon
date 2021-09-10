@@ -1,8 +1,8 @@
 #include "em_device.h"
-#include "core_cm33.h"
+#include "em_chip.h"
 
 extern "C" void _exit(int status)
 {
     static_cast<void>(status);
-    __NVIC_SystemReset();
+    CHIP_Reset();
 }
