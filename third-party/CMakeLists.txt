@@ -4,7 +4,30 @@
 
 add_library(cmsis INTERFACE)
 
-target_include_directories(cmsis INTERFACE cmsis/core)
+target_include_directories(cmsis SYSTEM INTERFACE cmsis/core)
+
+#------------------------------------------------------------------------------
+# gecko-sdk-intf
+#------------------------------------------------------------------------------
+
+add_library(gecko-sdk-intf INTERFACE)
+
+target_compile_definitions(gecko-sdk-intf
+    INTERFACE
+    EFR32BG22C224F512IM40
+    __STARTUP_CLEAR_BSS
+    )
+
+target_link_libraries(gecko-sdk-intf INTERFACE cmsis)
+
+target_include_directories(gecko-sdk-intf
+    SYSTEM
+    INTERFACE
+    silicon-labs/gecko-sdk/device
+    silicon-labs/gecko-sdk/emlib/include
+    silicon-labs/gecko-sdk/emdrv/config
+    silicon-labs/gecko-sdk/emdrv/include
+    )
 
 #------------------------------------------------------------------------------
 # gecko sdk
@@ -12,20 +35,7 @@ target_include_directories(cmsis INTERFACE cmsis/core)
 
 add_library(gecko-sdk OBJECT)
 
-target_compile_options(gecko-sdk PRIVATE "-w")
-
-target_compile_definitions(gecko-sdk 
-    PUBLIC 
-    EFR32BG22C224F512IM40 
-    __STARTUP_CLEAR_BSS)
-
-target_link_libraries(gecko-sdk PUBLIC cmsis)
-
-target_include_directories(gecko-sdk 
-    PUBLIC 
-    silicon-labs/gecko-sdk/device
-    silicon-labs/gecko-sdk/emlib/include
-    )
+target_link_libraries(gecko-sdk PUBLIC gecko-sdk-intf)
 
 target_sources(gecko-sdk
     PRIVATE
@@ -76,29 +86,32 @@ target_sources(gecko-sdk
     silicon-labs/gecko-sdk/emlib/source/em_vcmp.c
     silicon-labs/gecko-sdk/emlib/source/em_vdac.c
     silicon-labs/gecko-sdk/emlib/source/em_wdog.c
+    #emdrv
+    silicon-labs/gecko-sdk/emdrv/source/dmactrl.c
+    silicon-labs/gecko-sdk/emdrv/source/dmadrv.c
     )
 
 #------------------------------------------------------------------------------
 # freertos
 #------------------------------------------------------------------------------
 
-# Note: link against "freertos-non-secure" or "freertos-secure" depending on 
+# Note: link against "freertos-non-secure" or "freertos-secure" depending on
 # the application's requirements for memory protection & privileged execution.
 
-# FreeRTOS is an interface library because it cannot be built without an 
-# application-specific FreeRTOSConfig.h header (and potentially a few 
+# FreeRTOS is an interface library because it cannot be built without an
+# application-specific FreeRTOSConfig.h header (and potentially a few
 # application-specific hooks).
 
-# The most straightforward way to include FreeRTOS into an application will be 
+# The most straightforward way to include FreeRTOS into an application will be
 # to link against the interface library & make sure a FreeRTOSConfig.h header
-# is in the application's include directories (in addition to compiling the 
+# is in the application's include directories (in addition to compiling the
 # required hooks).
 
 add_library(freertos INTERFACE)
 
 target_include_directories(freertos INTERFACE freertos/include)
 
-target_sources(freertos 
+target_sources(freertos
     INTERFACE
     freertos/source/queue.c
     freertos/source/stream_buffer.c

@@ -1,1 +1,2 @@
 add_subdirectory(bare_metal_blinky)
+add_subdirectory(neopixel_controller)

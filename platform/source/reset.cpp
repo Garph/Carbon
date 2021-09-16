@@ -1,8 +1,9 @@
+#include <platform/reset.h>
+
 #include "em_device.h"
 #include "em_chip.h"
 
-extern "C" void _exit(int status)
+extern "C" void platform_reset()
 {
-    static_cast<void>(status);
     CHIP_Reset();
 }
